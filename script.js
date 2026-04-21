@@ -231,8 +231,16 @@ function drawNeedle(ctx, diff, w, h) {
 function showShout(text, isBig = false) {
     const box = document.getElementById('shout-box');
     if (!box) return;
+
     box.innerText = text;
-    box.style.fontSize = isBig ? "2.5rem" : "1.5rem";
+    
+    // 文字数が多い場合は、isBigフラグに関わらず少し小さくする
+    if (text.length > 10) {
+        box.style.fontSize = "clamp(1.2rem, 6vw, 1.8rem)";
+    } else {
+        box.style.fontSize = isBig ? "clamp(2rem, 8vw, 3rem)" : "clamp(1.5rem, 6vw, 2rem)";
+    }
+
     box.style.opacity = "1";
     if (shoutTimer) clearTimeout(shoutTimer);
     shoutTimer = setTimeout(() => {
