@@ -95,7 +95,7 @@ function updateTuner() {
     const sampleRate = Tone.context.sampleRate;
     const frequency = autoCorrelate(buffer, sampleRate);
     const intervalMs = parseInt(document.getElementById('speedSelect').value);
-
+    
     const canvas = document.getElementById('meter');
     const ctx = canvas.getContext('2d');
     
@@ -107,16 +107,22 @@ function updateTuner() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawScale(ctx, canvas.width, canvas.height);
 
-    if (frequency !== -1) {
+if (frequency !== -1) {
         lastNoteTime = Date.now();
-        continuousSoundTime += intervalMs; // 音が鳴っている間はずっと加算
+        continuousSoundTime += intervalMs; 
 
-        // 3秒経過判定
+        // 1. テンポ80の4拍分(3秒)判定
         if (continuousSoundTime >= TARGETTIME && !hasShoutedFourBeats) {
-            showShout(messages[Math.floor(Math.random() * messages.length)]);
-            hasShoutedFourBeats = true; // 1回出したらフラグを立てる
+            showShout("4拍完走！ナイスバルク！", true);
+            hasShoutedFourBeats = true;
         }
-        // ピッチ計算
+
+        // 2. 【レア】超ロングトーン（5秒以上）
+        if (continuousSoundTime >= 5000 && !hasShoutedLongTone) {
+            showShout("肺が鉄鉄鋼の塊か！！", true);
+            hasShoutedLongTone = true;
+        }
+
         let midiNum = 12 * Math.log2(frequency / 440) + 69;
         let displayMidiNum = (mode === 'sax') ? midiNum - 3 : midiNum;
         const noteIndex = (Math.round(displayMidiNum) % 12 + 12) % 12;
@@ -129,29 +135,43 @@ function updateTuner() {
 
         drawNeedle(ctx, diff, canvas.width, canvas.height);
 
-        // 音量(dB)計算
+        // 3. 【レア】ピッチが完璧（1.0Hz以内を1秒キープ）
+        if (Math.abs(diff) < 1.0) {
+            perfectPitchTime += intervalMs;
+            if (perfectPitchTime >= 1000 && !hasShoutedPerfect) {
+                showShout("彫刻のような精密さ！", true);
+                hasShoutedPerfect = true;
+            }
+        } else {
+            perfectPitchTime = 0;
+        }
+
+        // 音量計算
         let sum = 0;
         for (let i = 0; i < buffer.length; i++) sum += buffer[i] * buffer[i];
         let db = 20 * Math.log10(Math.sqrt(sum / buffer.length) || 0.000001);
-
         updateVolumeMeter(db);
 
-        // --- 掛け声判定ロジック ---
+        // --- 通常の掛け声判定 ---
         if (Math.abs(diff) <= 10) {
             stableFrames++;
             if (stableFrames === 15) showShout("いいよ！");
-            if (stableFrames === 20) showShout(messages[Math.floor(Math.random() * messages.length)]);
-            if (stableFrames === 30) showShout("ナイスバルク！", true);
+            // messages配列からランダムに出る処理などはそのまま維持
         } else {
             stableFrames = 0;
         }
 
     } else {
-        // 音が止まった時の余韻（0.8秒）
+        // 音が止まった時のリセット処理
         if (Date.now() - lastNoteTime > 800) {
             document.getElementById('note').innerText = "--";
             stableFrames = 0;
+            continuousSoundTime = 0;
+            perfectPitchTime = 0;
             hasShoutedFourBeats = false;
+            hasShoutedLongTone = false;
+            hasShoutedMaxVol = false;
+            hasShoutedPerfect = false;
         }
         updateVolumeMeter(-100);
     }
@@ -223,35 +243,27 @@ function showShout(text, isBig = false) {
 function updateVolumeMeter(db) {
     const bar = document.getElementById('volume-bar');
     const dbDisplay = document.getElementById('db-display');
-    
-    // デシベル表示
-    if (dbDisplay) {
-        dbDisplay.innerText = isFinite(db) ? db.toFixed(1) + " dB" : "-100.0 dB";
-    }
-
+    if (dbDisplay) dbDisplay.innerText = isFinite(db) ? db.toFixed(1) + " dB" : "-100.0 dB";
     if (!bar) return;
 
-    // -60dB 〜 0dB を 0% 〜 100% に変換
     let targetPercent = Math.min(100, Math.max(0, (db + 60) * 1.6));
-    
-    // 下がる時だけゆっくりにする余韻処理
     if (targetPercent < currentBarWidth) {
         currentBarWidth -= 1.0; 
     } else {
         currentBarWidth = targetPercent;
     }
-
     bar.style.width = currentBarWidth + "%";
 
-    // --- 色の切り替えロジック ---
+    // --- 色の切り替え ＆ 【レア】最大音量判定 ---
     if (currentBarWidth >= 66.6) {
-        // 3分の2を超えたら黄色（がんばった！）
         bar.style.backgroundColor = "#ff4444";
+        if (!hasShoutedMaxVol) {
+            showShout("会場の屋根が吹き飛ぶぞ！！", true);
+            hasShoutedMaxVol = true;
+        }
     } else if (currentBarWidth >= 33.3) {
-        // 3分の1を超えたら緑色
         bar.style.backgroundColor = "#ffcc00";
     } else {
-        // それ以下は水色
         bar.style.backgroundColor = "#00ffcc";
     }
 }
