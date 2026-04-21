@@ -1,6 +1,6 @@
 {
-  "name": "Sax Master Tuner",
-  "short_name": "SaxTuner",
+  "name": "Sax Motivation Tuner",
+  "short_name": "SaxMotivationTuner",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#1a1a1a",
