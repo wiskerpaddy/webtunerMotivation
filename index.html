@@ -154,6 +154,29 @@
             
             transition: opacity 0.5s ease;
         }
+
+        /* --- Chrome Mobile 用の強制フィット設定 --- */
+        @media screen and (-webkit-min-device-pixel-ratio:0) {
+            /* Chromeのみ、app-containerの高さを 92dvh 程度に抑えてツールバー分の食い込みを回避 */
+            .app-container {
+                height: 92dvh !important;
+                justify-content: space-evenly !important; /* 余白を均等にして詰める */
+            }
+
+            /* 各要素の余白をさらにダイエット */
+            h1 { font-size: 1.1rem !important; margin: 2px 0 !important; }
+            #note { font-size: clamp(50px, 15vh, 85px) !important; }
+            #shout-box { height: 60px !important; margin: 0 !important; }
+            .volume-section { margin: 5px 0 !important; }
+        }
+
+        /* --- iPhoneのSafari等の挙動も安定させるための保険 --- */
+        @supports (-webkit-touch-callout: none) {
+            .app-container {
+                /* iOS Safariなどの場合は 95dvh 程度が最適 */
+                height: 95dvh;
+            }
+        }
     </style>
 </head>
 <body>
