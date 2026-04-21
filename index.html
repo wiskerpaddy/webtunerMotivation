@@ -10,29 +10,26 @@
         /* 全体の基本設定 */
         body {
             margin: 0;
-            padding: 10px; /* 余白を少し詰める */
+            padding: 10px;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* dvhを使うことでブラウザのツールバーを考慮した高さになります */
-            height: 100dvh; 
+            /* 固定ではなく、最低100%確保。はみ出た場合はスクロールを許可 */
+            min-height: 100dvh; 
             background: #1a1a1a;
             color: #fff;
             font-family: sans-serif;
-            overflow: hidden; /* 画面が揺れるのを防ぐ */
+            overflow-y: auto; /* 見切れた場合にスクロールできるように変更 */
         }
 
         .app-container {
             width: 100%;
             max-width: 500px;
-            height: 100%;
+            /* 100%固定をやめて要素間のバランスをとる */
             display: flex;
             flex-direction: column;
-            /* 要素を上下にきれいに分散させる */
-            justify-content: space-between; 
             align-items: center;
-            padding-bottom: env(safe-area-inset-bottom); /* iPhoneのホームバー対策 */
         }
 
         h1 { 
@@ -40,12 +37,13 @@
             margin: 10px 0; 
         }
 
+        /* --- 音符表示のサイズ微調整 --- */
         #note {
-            /* 高さが足りない場合を考慮して、少し控えめなサイズに調整 */
-            font-size: clamp(60px, 20vh, 120px); 
+            /* 画面の高さに合わせて柔軟にサイズを変える clamp を活用 */
+            font-size: clamp(50px, 15vh, 100px); 
             font-weight: bold;
             color: #00ffcc;
-            margin: 0;
+            margin: 5px 0;
         }
 
         #freq { font-size: 1rem; color: #888; margin-bottom: 5px; }
@@ -78,13 +76,14 @@
         .btn-tuning {
             width: 100%;
             max-width: 300px;
-            margin-top: 10px;
-            margin-bottom: 10px; /* 下端にピッタリつきすぎないように */
-            padding: 15px;
+            margin: 10px 0;
+            padding: 12px; /* 少しスリムに */
             background: transparent;
             border: 2px solid #00ffcc;
             color: #00ffcc;
             font-weight: bold;
+            /* 下端で見切れないように余白を確保 */
+            margin-bottom: env(safe-area-inset-bottom);
         }
 
         .btn-tuning.active { background: #00ffcc; color: #1a1a1a; }
@@ -94,10 +93,10 @@
 
         select { background: #333; color: #fff; border: 1px solid #555; }
     
-        /* 音量セクション全体のレイアウト */
+        /* --- 余白の圧縮 --- */
         .volume-section {
-            width: 90%;
-            margin: 20px 0;
+            width: 95%;
+            margin: 10px 0; /* 20pxから10pxに短縮 */
         }
 
         .volume-header {
@@ -137,14 +136,13 @@
 
         /* 掛け声のスタイル */
         #shout-box {
-            height: 80px;
+            height: 60px; /* 80pxから60pxに短縮 */
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             font-weight: bold;
-            margin-top: 10px;
-            /* transitionを入れると消える時がふわっとします */
+            margin-top: 5px;
             transition: opacity 0.5s ease;
         }
     </style>
