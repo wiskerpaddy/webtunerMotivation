@@ -178,42 +178,51 @@
             }
         }
 
-        /* --- PC/Chrome向けのレイアウト調整 --- */
+        /* --- PC/Chrome向け：スクロールを完全に封じ込める調整 --- */
         @media screen and (min-width: 768px) {
             body {
-                padding: 5px; /* 上下の余白を最小限に */
+                /* スクロールを禁止し、中身を中央に寄せる */
+                overflow: hidden !important; 
+                padding: 0; 
+                display: flex;
+                align-items: center;
                 justify-content: center;
             }
 
             .app-container {
-                max-height: 90vh; /* 画面の90%以内に収める */
-                justify-content: center; /* 要素を中央に寄せて余白を自動調整 */
-                gap: 5px; /* 要素間の隙間を一定にする */
+                /* 固定の高さではなく、ブラウザの表示枠に対して余裕を持たせる */
+                height: 90vh !important; 
+                width: 95%;
+                max-width: 480px;
+                /* 要素間の隙間を詰め、中央に寄せる */
+                justify-content: center !important; 
+                gap: 5px !important; 
             }
 
-            h1 { margin: 5px 0; font-size: 1.2rem; }
-
+            /* 各パーツを数ピクセルずつダイエット */
+            h1 { font-size: 1.1rem !important; margin-bottom: 2px !important; }
+            
             #note {
-                font-size: 80px; /* PCでは大きすぎないサイズに固定 */
-                margin: 0;
+                font-size: 70px !important; /* PCではこのサイズが安定します */
+                line-height: 1 !important;
             }
 
             canvas {
-                max-height: 80px; /* メーターを少しスリムに */
-            }
-
-            .volume-section {
-                margin: 5px 0;
+                max-height: 70px !important; /* メーターをさらにスリムに */
             }
 
             #shout-box {
-                height: 60px;
-                margin: 5px 0;
+                height: 50px !important; /* 叫び声エリアを圧縮 */
+                font-size: 1.3rem !important;
+            }
+
+            .volume-section {
+                margin: 2px 0 !important;
             }
 
             .btn-tuning {
-                margin-top: 5px;
-                padding: 10px;
+                padding: 8px !important;
+                margin-top: 5px !important;
             }
         }
     </style>
