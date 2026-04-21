@@ -173,7 +173,7 @@ if (frequency !== -1) {
             hasShoutedMaxVol = false;
             hasShoutedPerfect = false;
         }
-        currentBarWidth = -100;
+        updateVolumeMeter(-100);
     }
 }
 
