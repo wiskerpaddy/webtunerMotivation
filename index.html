@@ -177,6 +177,45 @@
                 height: 95dvh;
             }
         }
+
+        /* --- PC/Chrome向けのレイアウト調整 --- */
+        @media screen and (min-width: 768px) {
+            body {
+                padding: 5px; /* 上下の余白を最小限に */
+                justify-content: center;
+            }
+
+            .app-container {
+                max-height: 90vh; /* 画面の90%以内に収める */
+                justify-content: center; /* 要素を中央に寄せて余白を自動調整 */
+                gap: 5px; /* 要素間の隙間を一定にする */
+            }
+
+            h1 { margin: 5px 0; font-size: 1.2rem; }
+
+            #note {
+                font-size: 80px; /* PCでは大きすぎないサイズに固定 */
+                margin: 0;
+            }
+
+            canvas {
+                max-height: 80px; /* メーターを少しスリムに */
+            }
+
+            .volume-section {
+                margin: 5px 0;
+            }
+
+            #shout-box {
+                height: 60px;
+                margin: 5px 0;
+            }
+
+            .btn-tuning {
+                margin-top: 5px;
+                padding: 10px;
+            }
+        }
     </style>
 </head>
 <body>
